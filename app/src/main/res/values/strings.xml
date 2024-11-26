@@ -1,0 +1,50 @@
+<resources>
+    <string name="app_name">MazeFinal</string>
+    <string name="action_settings">Settings</string>
+
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+    <string name="lorem_ipsum"> Lorem ipsum dolor sit amet</string>
+
+
+    <!-- dialogs -->
+    <string name="copyright">2024 Sam Kapp</string>
+
+    <!-- toolbar -->
+    <string name="about">about</string>
+    <string name="exit">exit</string>
+    <string name="menu_about" type="id">About</string>
+    <string name="menu_exit" type="id">Exit</string>
+
+    <!-- solution custom dialog -->
+    <string name="button_positive">yes</string>
+    <string name="new_game">New Game</string>
+    <string name="new_game_dialog">Are you sure you want to start a new game?\nDoing so will reset your current score.</string>
+    <string name="score">Score</string>
+    <string name="up">Up</string>
+    <string name="left">Left</string>
+    <string name="right">Right</string>
+    <string name="down">Down</string>
+
+    <!-- Fragments -->
+    <string name="maze_fragment_label">Maze Fragment</string>
+    <string name="achievements"> Achievements shall go here :) </string>
+    <string name="achievement_fragment_label">Achievement Fragment</string>
+    <string name="maze">Go Back To Maze</string>
+    <string name="customize">Will customize appearances here\n</string>
+    <string name="customize_fragment_label">Customize Fragment</string>
+    <string name="go_to_achievements">Go to Achievements</string>
+    <string name="go_to_customize">Go to Customize</string>
+    <string name="mazes">Mazes</string>
+    <string name="main_menu_subtitle">Press play to start</string>
+    <string name="start_button">Start</string>
+    <string name="achievements_button">Achievements</string>
+    <string name="customization_button">Customization</string>
+    <string name="go_to_main_menu">Go to Main Menu\n</string>
+    <string name="reset_achievements">Reset Achievements</string>
+    <string name="go_to_maze">Go to Maze\n</string>
+
+</resources>

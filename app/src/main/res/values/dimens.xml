@@ -1,0 +1,7 @@
+<resources>
+    <!-- Text size for labels -->
+    <dimen name="text_size">20sp</dimen>
+
+    <!-- Height for sliders -->
+    <dimen name="slider_height">40dp</dimen>
+</resources>

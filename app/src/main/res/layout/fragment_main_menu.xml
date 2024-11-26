@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:gravity="center">
+
+    <!-- Title TextView -->
+    <TextView
+        android:id="@+id/textview_main"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/mazes"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp" />
+
+    <!-- Smaller Subtitle TextView -->
+    <TextView
+        android:id="@+id/textview_subtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/main_menu_subtitle"
+        android:textSize="14sp"
+        android:layout_marginBottom="32dp" />
+
+    <!-- Start Button -->
+    <Button
+        android:id="@+id/button_start"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/start_button"
+        android:layout_marginBottom="8dp" />
+
+    <!-- Achievements Button -->
+    <Button
+        android:id="@+id/button_achievements"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/achievements_button"
+        android:layout_marginBottom="8dp" />
+
+    <!-- Customization Button -->
+    <Button
+        android:id="@+id/button_customization"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/customization_button" />
+
+</LinearLayout>

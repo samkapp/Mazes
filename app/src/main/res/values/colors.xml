@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="error_background">#FF00FF</color>
+    <color name="outside_background">#02B07B</color>
+    <color name="maze_background">#feb3ca</color>
+    <color name="wall_background">#b00238</color>
+    <color name="start_background">#B3FEE7</color>
+    <color name="end_background">#014c35</color>
+    <color name="player_background">#FF0d0d0d</color>
+    <color name="path_background">#8c8c8c</color>
+    <color name="toolbar_background">#fc034e</color>
+    <color name="comp_toolbar_background">#03FCB1</color>
+    <color name="dialog_background">#b00237</color>
+    <color name="toast_background">#02B07B</color>
+    <color name="comp_dialog_background">#02B07B</color>
+</resources>

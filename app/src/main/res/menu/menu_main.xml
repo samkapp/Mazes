@@ -1,0 +1,30 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.mazefinal.MainActivity">
+
+    <item
+        android:id="@+id/maze"
+        android:icon="@drawable/maze"
+        android:title="@string/go_to_maze"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/achievements"
+        android:icon="@drawable/achievements"
+        android:title="@string/go_to_achievements"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/customize"
+        android:icon="@drawable/customize"
+        android:title="@string/go_to_customize"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/main_menu"
+        android:icon="@drawable/main_menu"
+        android:title="@string/go_to_main_menu"
+        app:showAsAction="ifRoom" />
+
+</menu>

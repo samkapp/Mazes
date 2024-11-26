@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/MainMenuFragment">
+
+    <fragment
+        android:id="@+id/MazeFragment"
+        android:name="com.example.mazefinal.MazeFragment"
+        android:label="@string/maze_fragment_label"
+        tools:layout="@layout/fragment_maze">
+
+        <action
+            android:id="@+id/action_MazeFragment_to_AchievementFragment"
+            app:destination="@id/AchievementFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/AchievementFragment"
+        android:name="com.example.mazefinal.AchievementFragment"
+        android:label="@string/achievement_fragment_label"
+        tools:layout="@layout/fragment_achievement">
+
+        <action
+            android:id="@+id/action_AchievementFragment_to_MazeFragment"
+            app:destination="@id/MazeFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/CustomizeFragment"
+        android:name="com.example.mazefinal.CustomizeFragment"
+        android:label="@string/customize_fragment_label"
+        tools:layout="@layout/fragment_customize">
+
+        <action
+            android:id="@+id/action_CustomizeFragment_to_MazeFragment"
+            app:destination="@id/MazeFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/MainMenuFragment"
+        android:name="com.example.mazefinal.MainMenuFragment"
+        android:label="Main Menu Fragment"
+        tools:layout="@layout/fragment_main_menu">
+
+        <action
+            android:id="@+id/action_MainMenuFragment_to_AchievementFragment"
+            app:destination="@id/AchievementFragment" />
+
+        <action
+            android:id="@+id/action_MainMenuFragment_to_CustomizationFragment"
+            app:destination="@id/CustomizeFragment" />
+
+        <action
+            android:id="@+id/action_MainMenuFragment_to_MazeFragment"
+            app:destination="@id/MazeFragment" />
+
+
+   </fragment>
+</navigation>
