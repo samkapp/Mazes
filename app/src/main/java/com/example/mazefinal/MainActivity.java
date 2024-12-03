@@ -56,6 +56,9 @@ public class MainActivity extends AppCompatActivity {
     private final long GAME_TIME = 10000;
     private boolean isGameOver = false;
 
+    // Sound Manager
+    SoundManager soundManager;
+
 
     private AppBarConfiguration appBarConfiguration;
     private ActivityMainBinding binding;
@@ -82,6 +85,8 @@ public class MainActivity extends AppCompatActivity {
         mazeTimeTextView = findViewById(R.id.mazeTimeText);
         updateTimeText();
 
+        soundManager = new SoundManager(this);
+
         if (savedInstanceState != null) {
             loadGameState();
         } else {
@@ -101,6 +106,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
+        soundManager.playClickSound();
 
         if (id == R.id.achievements) {
             // Navigate to AchievementsFragment
@@ -271,6 +277,7 @@ public class MainActivity extends AppCompatActivity {
      * Starts a new maze
      */
     private void start(int size) {
+        soundManager.playNewGameSound();
         maze = new Maze(size);
     }
 
@@ -300,7 +307,9 @@ public class MainActivity extends AppCompatActivity {
      * Moves the player in the given direction, checks for wins,
      */
     public void movePlayer(int direction) {
-        maze.move(direction);
+        if (!maze.move(direction)) {
+            soundManager.playErrorSound();
+        }
         curPos = maze.getCurrentPos();
 
         if (maze.isOver()) {
@@ -357,6 +366,10 @@ public class MainActivity extends AppCompatActivity {
             public void onTick(long millisUntilFinished) {
                 timeRemaining = millisUntilFinished;
                 updateTimeText();
+
+                if (timeRemaining  <= 3000)
+                    soundManager.playTimerSound();
+
             }
 
             @Override
@@ -370,6 +383,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void endGame() {
+        soundManager.playGameOverSound();
         isGameOver = true;
         saveScore();
 

@@ -182,10 +182,10 @@ public class Maze {
      * @param direction an integer representing the direction of movement:
      *                  0 = North, 1 = East, 2 = South, 3 = West
      */
-    public void move(int direction) {
+    public boolean move(int direction) {
         // Make sure the player can move in the given direction
         if (!isValidMove(direction)) {
-            return;
+            return false;
         }
 
         Log.d("POSITION: ", "ROW: " + currentPos[0] + " COL: " + currentPos[1]);
@@ -221,6 +221,8 @@ public class Maze {
 
         // Add the new position to the path
         path.add(currentPos.clone());
+
+        return true;
 
     }
 

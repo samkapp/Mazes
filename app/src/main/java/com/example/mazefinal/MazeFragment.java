@@ -1,5 +1,6 @@
 package com.example.mazefinal;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.hardware.Sensor;
@@ -90,6 +91,7 @@ public class MazeFragment extends Fragment implements SensorEventListener {
     /**
      * Sets up the maze using GridLayout and View elements
      */
+    @SuppressLint("ResourceAsColor")
     public static void setImageViews(Context context, View view, int[][] maze, int rows, int cols) {
         GridLayout gridLayout = view.findViewById(R.id.maze_grid_layout);
 
@@ -124,7 +126,7 @@ public class MazeFragment extends Fragment implements SensorEventListener {
                 // Set the background color for the cell based on maze value
                 int cellValue = maze[i][j];
                 if (cellValue == 5) { // Cell value 5 represents the player
-                    cellView.setBackgroundColor(playerColor); // Use the selected player color
+                    cellView.setBackgroundColor(playerColor);
                 } else {
                     cellView.setBackgroundColor(getColorForCellValue(cellValue, context));
                 }
