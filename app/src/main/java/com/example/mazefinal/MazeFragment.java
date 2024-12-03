@@ -1,6 +1,11 @@
 package com.example.mazefinal;
 
 import android.content.Context;
+import android.content.pm.ActivityInfo;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,9 +20,17 @@ import androidx.core.content.ContextCompat;
 
 import com.example.mazefinal.databinding.FragmentMazeBinding;
 
-public class MazeFragment extends Fragment {
+public class MazeFragment extends Fragment implements SensorEventListener {
 
     private FragmentMazeBinding binding;
+
+    // Values for gyroscope
+    private SensorManager sensorManager;
+    private Sensor gyroscope;
+    private static final float TILT_THRESHOLD = 0.5f;
+    private long lastMoveTime = 0; // Timestamp of last movement
+    private static final long MOVE_DELAY = 200; // Minimum time between moves in milliseconds (200ms = 5 moves per second)
+
 
     @Override
     public View onCreateView(
@@ -31,20 +44,47 @@ public class MazeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        // Init SensorManager
+        sensorManager = (SensorManager) requireActivity().getSystemService(Context.SENSOR_SERVICE);
+        if (sensorManager != null) {
+            gyroscope = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+            sensorManager.registerListener(this, gyroscope, SensorManager.SENSOR_DELAY_UI);
+        }
+
+        // Init ViewModel
         MazeViewModel viewModel = new ViewModelProvider(requireActivity()).get(MazeViewModel.class);
         viewModel.getMazeData().observe(getViewLifecycleOwner(), maze -> {
             if (maze != null) {
                 update(requireContext(), view, maze, viewModel.getRows().getValue(), viewModel.getCols().getValue());
             }
         });
+
         setupMovementButtons();
         updateScoreText();
+        updateMazeInfoText();
+        startTimer();
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // Lock the orientation when this fragment is visible
+        lockOrientation();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        // Unlock orientation when this fragment is no longer visible
+        unlockOrientation();
     }
 
     /**
@@ -133,7 +173,6 @@ public class MazeFragment extends Fragment {
     }
 
     private void movePlayer(int direction) {
-        // Logic for movement
         MainActivity activity = (MainActivity) getActivity();
         if (activity != null) {
             activity.movePlayer(direction);
@@ -141,11 +180,74 @@ public class MazeFragment extends Fragment {
     }
 
     private void updateScoreText() {
-        // Logic for movement
         MainActivity activity = (MainActivity) getActivity();
         if (activity != null) {
             activity.updateScoreText();
         }
     }
-}
 
+    private void updateMazeInfoText() {
+        MainActivity activity = (MainActivity) getActivity();
+        if (activity != null) {
+            activity.updateMazeInfoText();
+        }
+    }
+
+    private void startTimer() {
+        MainActivity activity = (MainActivity) getActivity();
+        if (activity != null)
+                activity.startTimer();
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        if (event.sensor.getType() == Sensor.TYPE_GYROSCOPE) {
+            long currentTime = System.currentTimeMillis();
+
+            // Only process movement if enough time has passed
+            if (currentTime - lastMoveTime > MOVE_DELAY) {
+                // Get the gyroscope data
+                float x = event.values[0]; // Rotation around X-axis (forward/backward tilt)
+                float y = event.values[1]; // Rotation around Y-axis (left/right tilt)
+
+                // Check if the tilt exceeds the threshold and move player accordingly
+                if (Math.abs(x) > TILT_THRESHOLD) {
+                    if (x > 0) {
+                        movePlayer(2); // Move up (forward tilt)
+                    } else {
+                        movePlayer(0); // Move down (backward tilt)
+                    }
+                }
+                if (Math.abs(y) > TILT_THRESHOLD) {
+                    if (y > 0) {
+                        movePlayer(1); // Move right (right tilt)
+                    } else {
+                        movePlayer(3); // Move left (left tilt)
+                    }
+                }
+
+                // Update the last movement time
+                lastMoveTime = currentTime;
+            }
+        }
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        // Not needed for this functionality
+    }
+
+    /**
+     * Lock the orientation to portrait when the MazeFragment is active.
+     */
+    private void lockOrientation() {
+        getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
+    }
+
+    /**
+     * Unlock the orientation when the MazeFragment is no longer active.
+     */
+    private void unlockOrientation() {
+        getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+    }
+}

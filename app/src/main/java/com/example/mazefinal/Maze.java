@@ -174,8 +174,6 @@ public class Maze {
         entrance[1] = startX;
         exit[0] = rows - 1;
         exit[1] = endX;
-
-        System.out.println("SHOULDNT BE HERE MORE THAN ONCE :L");
     }
 
     /**
@@ -270,8 +268,6 @@ public class Maze {
      * @return true if the game is over (player standing on exit tile) false otherwise
      */
     public boolean isOver() {
-        System.out.println("Player: ( " + currentPos[0] + ", " +  currentPos[1] + ")");
-        System.out.println("Exit: (" + exit[0] + ", " + exit[1] + ")");
         return currentPos[0] == exit[0] && currentPos[1] == exit[1];
     }
 

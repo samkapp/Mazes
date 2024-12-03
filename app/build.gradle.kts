@@ -35,6 +35,7 @@ android {
 }
 
 dependencies {
+    implementation("com.google.code.gson:gson:2.8.9")
     implementation("com.afollestad.material-dialogs:core:3.3.0")
     implementation("com.afollestad.material-dialogs:color:3.3.0")
     implementation(libs.appcompat)

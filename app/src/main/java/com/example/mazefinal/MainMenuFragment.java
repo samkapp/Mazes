@@ -40,6 +40,10 @@ public class MainMenuFragment extends Fragment {
                 NavHostFragment.findNavController(MainMenuFragment.this)
                         .navigate(R.id.action_MainMenuFragment_to_MazeFragment)
         );
+        binding.buttonQuit.setOnClickListener(v -> {
+            // Close the application
+            getActivity().finish();
+        });
     }
 
     @Override
