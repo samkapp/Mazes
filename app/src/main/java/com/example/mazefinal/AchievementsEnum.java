@@ -2,6 +2,8 @@ package com.example.mazefinal;
 
 /**
  * Enum for all the possible achievements
+ *
+ * @author sam kapp
  */
 public enum AchievementsEnum {
     GRID_5X5, GRID_7X7, GRID_9X9, GRID_11X11, GRID_13X13,

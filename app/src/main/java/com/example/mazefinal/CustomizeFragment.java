@@ -12,6 +12,12 @@ import androidx.fragment.app.Fragment;
 
 import com.example.mazefinal.databinding.FragmentCustomizeBinding;
 
+/**
+ * Fragment for user customization. Allows for users to change the color of the piece
+ * they control in the maze.
+ *
+ * @author sam kapp
+ */
 public class CustomizeFragment extends Fragment {
     private FragmentCustomizeBinding binding;
     private MainActivity mainActivity;
@@ -23,35 +29,36 @@ public class CustomizeFragment extends Fragment {
     ) {
         binding = FragmentCustomizeBinding.inflate(inflater, container, false);
 
-        // Initialize MainActivity reference to access playerColor
         mainActivity = (MainActivity) getActivity();
 
-        // Set the initial color based on the current player color
+        // set to default color
         if (mainActivity != null) {
             binding.playerColorSquare.setBackgroundColor(mainActivity.playerColor);
 
-            // Get the ARGB components from the current color
+            // Get the rgb of current color
             int currentColor = mainActivity.playerColor;
             int alpha = Color.alpha(currentColor);
             int red = Color.red(currentColor);
             int green = Color.green(currentColor);
             int blue = Color.blue(currentColor);
 
-            // Set the initial progress of the SeekBars
+            // set seekbars
             binding.alphaSeekBar.setProgress(alpha);
             binding.redSeekBar.setProgress(red);
             binding.greenSeekBar.setProgress(green);
             binding.blueSeekBar.setProgress(blue);
 
-            // Add listeners to the SeekBars to update the color dynamically
+            // listeners to update
             addSeekBarListeners();
         }
 
         return binding.getRoot();
     }
 
+    /**
+     * Adds a seekbar listener to update color view in real time
+     */
     private void addSeekBarListeners() {
-        // Listen to changes on the SeekBars and update the color in real-time
         binding.alphaSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -105,20 +112,20 @@ public class CustomizeFragment extends Fragment {
         });
     }
 
+    /**
+     * Updates player color depending on the current seekbar values
+     */
     private void updatePlayerColor() {
-        // Get the current ARGB values from the SeekBars
         int alpha = binding.alphaSeekBar.getProgress();
         int red = binding.redSeekBar.getProgress();
         int green = binding.greenSeekBar.getProgress();
         int blue = binding.blueSeekBar.getProgress();
 
-        // Combine them into a single ARGB color value
         int newColor = Color.argb(alpha, red, green, blue);
 
-        // Update the player color square
         binding.playerColorSquare.setBackgroundColor(newColor);
 
-        // Update the global color in MainActivity
+        // update in main activity
         if (mainActivity != null) {
             mainActivity.playerColor = newColor;
             mainActivity.customized_player = true;

@@ -32,9 +32,14 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import com.google.gson.Gson;
 
+/**
+ * Main activity for the maze app
+ *
+ * @author sam kapp
+ */
 public class MainActivity extends AppCompatActivity {
     // Values for maze game
-    private Maze maze = new Maze(5); // sets maze to default size
+    private Maze maze = new Maze(5);
     private int rows = maze.getRows();
     private int cols = maze.getCols();
     private int[] curPos = maze.getCurrentPos();
@@ -51,9 +56,9 @@ public class MainActivity extends AppCompatActivity {
     private TextView mazeTimeTextView;
 
     // Timer values
-    private CountDownTimer countDownTimer;
-    private long timeRemaining = 10000; //90000;
-    private final long GAME_TIME = 10000;
+    CountDownTimer countDownTimer;
+    private final long GAME_TIME = 60000;
+    private long timeRemaining = 0;
     private boolean isGameOver = false;
 
     // Sound Manager
@@ -76,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
         appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
 
+
         scoreTextView = findViewById(R.id.scoreTextView);
         updateScoreText();
 
@@ -90,7 +96,6 @@ public class MainActivity extends AppCompatActivity {
         if (savedInstanceState != null) {
             loadGameState();
         } else {
-            // ViewModel for the Maze
             MazeViewModel viewModel = new ViewModelProvider(this).get(MazeViewModel.class);
             viewModel.setMaze(maze.getMaze(), rows, cols);
         }
@@ -138,6 +143,7 @@ public class MainActivity extends AppCompatActivity {
             newGame();
             NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
             navController.navigate(R.id.MazeFragment);
+            return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -186,7 +192,24 @@ public class MainActivity extends AppCompatActivity {
         updateScoreText();
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+        }
+    }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+        }
+    }
 
+    /**
+     * Saves the game using sharedpreferences
+     */
     private void saveGameState() {
         SharedPreferences sharedPreferences = getSharedPreferences("GamePrefs", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -228,10 +251,13 @@ public class MainActivity extends AppCompatActivity {
         editor.apply();
     }
 
+    /**
+     * Loads the game from saved preferences
+     */
     private void loadGameState() {
         SharedPreferences sharedPreferences = getSharedPreferences("GamePrefs", MODE_PRIVATE);
 
-        // Retrieve maze JSON string and deserialize it back into a Maze object
+        // Retrieve maze
         String mazeJson = sharedPreferences.getString("MazeJson", "");
         Gson gson = new Gson();
         maze = gson.fromJson(mazeJson, Maze.class);
@@ -274,7 +300,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     /**
-     * Starts a new maze
+     * Starts a new maze level of given size
      */
     private void start(int size) {
         soundManager.playNewGameSound();
@@ -284,19 +310,26 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Starts a new game, resets progress from last game
      */
-    private void newGame() {
+    public void newGame() {
+        //reset game vars
         wins = 0;
         score = 0;
         rows = 5;
         cols = 5;
         start(rows);
         timeRemaining = GAME_TIME;
+
+        // Cancel the existing timer if it exists
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+        }
+
         startTimer();
         isGameOver = false;
+
         updateMazeInfoText();
         updateScoreText();
 
-        // Update the ViewModel
         MazeViewModel viewModel = new ViewModelProvider(this).get(MazeViewModel.class);
         viewModel.setMaze(maze.getMaze(), rows, cols);
     }
@@ -306,38 +339,39 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Moves the player in the given direction, checks for wins,
      */
-    public void movePlayer(int direction) {
+    public boolean movePlayer(int direction) {
         if (!maze.move(direction)) {
             soundManager.playErrorSound();
+            return false;
         }
         curPos = maze.getCurrentPos();
 
         if (maze.isOver()) {
             showCustomToast("Level Completed!");
 
-            // Calculate the time bonus based on the remaining time
-            long timeBonus =  (timeRemaining / 1000); // Convert time remaining to seconds
-
-            // Update the score: rows * cols * wins * 100 + time bonus
+            long timeBonus =  (timeRemaining / 1000);
             score += (rows * cols * (wins+1) * (100 - timeBonus));
             updateScoreText();
 
-            // Check if we need to increase maze size every 5 wins
+            // increase size every 3 wins
             wins++;
-            if (wins % 5 == 0) {
+            if (wins % 3 == 0) {
                 rows += 2;
                 cols += 2;
             }
             start(rows);
 
-            updateMazeInfoText();  // Update the maze size and attempt display
+            updateMazeInfoText();
         }
 
-        // Update the ViewModel
         MazeViewModel viewModel = new ViewModelProvider(this).get(MazeViewModel.class);
         viewModel.setMaze(maze.getMaze(), rows, cols);
+        return true;
     }
 
+    /**
+     * Updates the score text
+     */
     public void updateScoreText() {
         String str = "score: " + score;
         scoreTextView = findViewById(R.id.scoreTextView);
@@ -345,6 +379,9 @@ public class MainActivity extends AppCompatActivity {
             scoreTextView.setText(str);
     }
 
+    /**
+     * Updates the level text
+     */
     public void updateMazeInfoText() {
         String str = "Level: " + wins;
         mazeInfoTextView = findViewById(R.id.mazeInfoTextView);
@@ -352,6 +389,9 @@ public class MainActivity extends AppCompatActivity {
             mazeInfoTextView.setText(str);
     }
 
+    /**
+     * Updates the time left text
+     */
     public void updateTimeText() {
         String str = (timeRemaining / 1000) + "s";
         mazeTimeTextView = findViewById(R.id.mazeTimeText);
@@ -360,7 +400,13 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Starts a countdown timer
+     */
     public void startTimer() {
+        if (countDownTimer != null)
+            countDownTimer.cancel();
+
         countDownTimer = new CountDownTimer(timeRemaining, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
@@ -389,8 +435,10 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void showGameOverDialog(boolean isScoreInTop10) {
-        // Create a custom dialog or popup to show the score and the top 10
+    /**
+     * Shows the scoreboard, shown after game is complete
+     */
+    private void showGameOverDialog(boolean top10) {
         LayoutInflater inflater = getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.dialog_game_over, null);
 
@@ -403,24 +451,22 @@ public class MainActivity extends AppCompatActivity {
         TextView topScoresTextView = dialogView.findViewById(R.id.top_scores);
         topScoresTextView.setText(topScores);
 
-        // Create a dialog to show the scores
+        // show scores
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setView(dialogView)
-                .setCancelable(false); // Make the dialog non-dismissible by tapping outside
+                .setCancelable(false);
 
-        // Set the action for New Game button
+        // new game button
         builder.setPositiveButton("New Game", (dialog, which) -> {
             newGame();
 
-            // Update the ViewModel
             MazeViewModel viewModel = new ViewModelProvider(this).get(MazeViewModel.class);
             viewModel.setMaze(maze.getMaze(), rows, cols);
             dialog.dismiss();
         });
 
-        // Set the action for Main Menu button
+        // return to main menu button
         builder.setNegativeButton("Main Menu", (dialog, which) -> {
-            // Navigate to MainMenuFragment
             NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
             navController.navigate(R.id.MainMenuFragment);
             dialog.dismiss();
@@ -437,14 +483,14 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences prefs = getSharedPreferences("game_scores", MODE_PRIVATE);
         Set<String> topScores = prefs.getStringSet("top_scores", new HashSet<>());
 
-        // Sort the scores in descending order
+        // sort scores, descending order
         List<Integer> sortedScores = new ArrayList<>();
         for (String scoreStr : topScores) {
             sortedScores.add(Integer.parseInt(scoreStr));
         }
-        Collections.sort(sortedScores, Collections.reverseOrder()); // Sort descending
+        sortedScores.sort(Collections.reverseOrder());
 
-        // Format the top scores as a string
+        // turn top scores into string
         StringBuilder topScoresString = new StringBuilder();
         int position = 1;
         for (Integer score : sortedScores) {
@@ -467,26 +513,26 @@ public class MainActivity extends AppCompatActivity {
         // Add the new score
         topScores.add(String.valueOf(score));
 
-        // Sort the scores and keep the top 10
+        // sort scores
         List<Integer> sortedScores = new ArrayList<>();
         for (String scoreStr : topScores) {
             sortedScores.add(Integer.parseInt(scoreStr));
         }
-        Collections.sort(sortedScores, Collections.reverseOrder()); // Sort descending
+        sortedScores.sort(Collections.reverseOrder());
 
-        // Keep only the top 10 scores
+        // keep top 10
         if (sortedScores.size() > 10) {
             sortedScores = sortedScores.subList(0, 10);
         }
 
-        // Save back the sorted top 10 scores
+        // save scores
         SharedPreferences.Editor editor = prefs.edit();
         editor.putStringSet("top_scores", new HashSet<>(sortedScores.stream()
                 .map(String::valueOf)
                 .collect(Collectors.toList())));
         editor.apply();
 
-        // Now, check if the player's score is in the top 10
+        // check if user score was in top 10
         if (sortedScores.contains((int) score)) {
             showGameOverDialog(true);
         } else {
@@ -495,6 +541,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * Checks if any achievements have been completed, and if so updates the achievements
+     */
     public void achievementsCheck() {
         // Check GRID achievements based on rows and columns
         if (rows == 5 && cols == 5) {

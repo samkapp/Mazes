@@ -3,7 +3,6 @@ package com.example.mazefinal;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +16,13 @@ import androidx.fragment.app.Fragment;
 
 import com.example.mazefinal.databinding.FragmentAchievementBinding;
 
+/**
+ * Achievement Fragment
+ * Shows a list of the achievements of the game, and provides either a checked or unchecked
+ *  box to show if they have been completed. Allows for achievements to be reset
+ *
+ * @author sam kapp
+ */
 public class AchievementFragment extends Fragment {
     private FragmentAchievementBinding binding;
     private static final String ACHIEVEMENTS_PREF = "achievements_prefs";
@@ -37,14 +43,11 @@ public class AchievementFragment extends Fragment {
 
         Context context = getContext();
         if (context != null) {
-            // Ensure the button exists before setting the listener
-            if (binding.resetAchievements != null) {
-                binding.resetAchievements.setOnClickListener(v -> {
-                    resetAllAchievements(context);
-                    Toast.makeText(context, "Achievements Reset", Toast.LENGTH_SHORT).show();
-                    populateAchievements(); // To update UI after reset
-                });
-            }
+            binding.resetAchievements.setOnClickListener(v -> {
+                resetAllAchievements(context);
+                Toast.makeText(context, "Achievements Reset", Toast.LENGTH_SHORT).show();
+                populateAchievements();
+            });
         }
     }
 
@@ -54,6 +57,9 @@ public class AchievementFragment extends Fragment {
         binding = null;
     }
 
+    /**
+     * Sets a given achievement to true
+     */
     public static void setAchievementsCompleted(Context context, AchievementsEnum achievements, boolean isCompleted) {
         SharedPreferences prefs = context.getSharedPreferences(ACHIEVEMENTS_PREF, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
@@ -61,60 +67,67 @@ public class AchievementFragment extends Fragment {
         editor.apply();
     }
 
+    /**
+     * Checks if an achievement has been completed or not
+     * @return true if the achievement is complete, false otherwise
+     */
     public static boolean isAchievementsCompleted(Context context, AchievementsEnum achievements) {
         SharedPreferences prefs = context.getSharedPreferences(ACHIEVEMENTS_PREF, Context.MODE_PRIVATE);
         return prefs.getBoolean(achievements.name(), false);
     }
 
+    /**
+     * Resets all the saved achievements
+     */
     public static void resetAllAchievements(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(ACHIEVEMENTS_PREF, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.clear(); // Clear all achievements from shared preferences
         editor.apply();
-
-        // Log for debugging
-        Log.d("AchievementFragment", "All achievements reset.");
     }
 
+    /**
+     * Uses a LinearLayout and fills it with all of the achievements, setting their
+     *  checkbox as well.
+     */
     public void populateAchievements() {
         LinearLayout achievementsContainer = getView().findViewById(R.id.achievements_container);
-        // Ensure that achievementsContainer is non-null before accessing it
+
         if (achievementsContainer != null) {
             achievementsContainer.removeAllViews();
 
-            // Loop through all achievements in the enum
+            // Loop through all achievements
             for (AchievementsEnum achievement : AchievementsEnum.values()) {
-                // Create a horizontal layout to hold the TextView and ImageView
+                // layout to hold achievement and checkbox
                 LinearLayout achievementLayout = new LinearLayout(getContext());
                 achievementLayout.setOrientation(LinearLayout.HORIZONTAL);
                 achievementLayout.setPadding(16, 16, 16, 16);
 
-                // Create a TextView for the achievement name
+                // achievement name
                 TextView achievementText = new TextView(getContext());
                 achievementText.setText(achievement.name());
                 achievementText.setTextSize(18f);
                 achievementText.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
 
-                // Create an ImageView for the checkmark or blank box
+                // achievement checkbox
                 ImageView achievementIcon = new ImageView(getContext());
                 boolean isCompleted = AchievementFragment.isAchievementsCompleted(getContext(), achievement);
 
                 if (isCompleted) {
-                    achievementIcon.setImageResource(R.drawable.checkmark);  // Completed achievement
+                    achievementIcon.setImageResource(R.drawable.checkmark);
                 } else {
-                    achievementIcon.setImageResource(R.drawable.blank_box);  // Uncompleted achievement
+                    achievementIcon.setImageResource(R.drawable.blank_box);
                 }
 
-                // Set LayoutParams for the ImageView
-                LinearLayout.LayoutParams iconParams = new LinearLayout.LayoutParams(48, 48); // You can adjust the size
-                iconParams.setMargins(16, 0, 0, 0);  // Add margin to separate the text and icon
+                // params
+                LinearLayout.LayoutParams iconParams = new LinearLayout.LayoutParams(48, 48);
+                iconParams.setMargins(16, 0, 0, 0);
                 achievementIcon.setLayoutParams(iconParams);
 
-                // Add TextView and ImageView to the layout
+                // add views
                 achievementLayout.addView(achievementText);
                 achievementLayout.addView(achievementIcon);
 
-                // Add the individual layout to the container
+                // add to container
                 achievementsContainer.addView(achievementLayout);
             }
         }

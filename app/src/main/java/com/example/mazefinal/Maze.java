@@ -15,7 +15,7 @@ import java.util.Stack;
  *  https://www.geeksforgeeks.org/kruskals-minimum-spanning-tree-algorithm-greedy-algo-2/
  *
  *
- * @author Sam Kapp
+ * @author sam kapp
  */
 public class Maze {
     // Values for the Maze

@@ -4,6 +4,9 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+/**
+ * ViewModel for the maze, updates the ui as the maze data changes
+ */
 public class MazeViewModel extends ViewModel {
     private final MutableLiveData<int[][]> mazeData = new MutableLiveData<>();
     private final MutableLiveData<Integer> rows = new MutableLiveData<>();

@@ -11,6 +11,9 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.mazefinal.databinding.FragmentMainMenuBinding;
 
+/**
+ * MainMenu fragment containing 4 buttons for navigating through the app
+ */
 public class MainMenuFragment extends Fragment {
     private FragmentMainMenuBinding binding;
 
@@ -37,8 +40,7 @@ public class MainMenuFragment extends Fragment {
                         .navigate(R.id.action_MainMenuFragment_to_CustomizationFragment)
         );
         binding.buttonStart.setOnClickListener(v ->
-                NavHostFragment.findNavController(MainMenuFragment.this)
-                        .navigate(R.id.action_MainMenuFragment_to_MazeFragment)
+                start()
         );
         binding.buttonQuit.setOnClickListener(v -> {
             // Close the application
@@ -50,5 +52,14 @@ public class MainMenuFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    private void start() {
+        MainActivity activity = (MainActivity) getActivity();
+        if (activity != null) {
+            activity.newGame();
+        }
+        NavHostFragment.findNavController(MainMenuFragment.this)
+                .navigate(R.id.action_MainMenuFragment_to_MazeFragment);
     }
 }
